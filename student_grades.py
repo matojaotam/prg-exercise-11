@@ -5,6 +5,7 @@ def random_numbers(count, low=0, high=100):
 class StudentsGrades:
     def __init__(self, scores):
         self.scores = scores
+        self._sorted_scores = None
 
     def get_by_index(self, index):
         return self.scores[index]
@@ -49,6 +50,48 @@ class StudentsGrades:
                     scores[j], scores[j + 1] = scores[j + 1], scores[j]
 
         return scores
+
+    def average(self):
+        if self.count() == 0:
+            return 0
+        return sum(self.scores) / self.count()
+
+    def best(self):
+        return max(self.scores)
+
+    def worst(self):
+        return min(self.scores)
+
+    def pass_rate(self):
+        passed = sum(1 for s in self.scores if s >= 50)
+        return passed / self.count()
+
+    def __str__(self):
+        return f"StudentsGrades: {self.count()} studentu, prumer {self.average():.1f}"
+
+    def find_sorted(self, score):
+        if self._sorted_scores is None:
+            print("serazuji...")
+            self._sorted_scores = self.get_sorted()
+        left = 0
+        right = len(self._sorted_scores) - 1
+
+        while left <= right:
+            mid = (left + right) // 2
+            mid_value = self._sorted_scores[mid]
+
+            if mid_value == score:
+                return mid
+            elif mid_value < score:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        return None
+
+
+
+
 def main():
     results = StudentsGrades([85, 42, 91, 67, 50, 73, 100, 38, 58])
 
@@ -86,5 +129,8 @@ def main():
     print("Serazene vysledky:")
     print(random_results.get_sorted())
 
+    print(results.find_sorted(91))  # sorting… → index 7
+    print(results.find_sorted(50))  # → index 2 (už neřadí)
+    print(results.find_sorted(77))  # → None
 
 print(main())
